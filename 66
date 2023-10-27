@@ -1,0 +1,44 @@
+#include <iostream>
+#include <fstream>
+#include <stack>
+#include <string>
+using namespace std;
+int main() {
+    string filename;
+    cout << "Path to the File: "; //index.html
+    cin >> filename;
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cerr << "Error to open file." << endl;
+        return 1;
+    }
+    stack<string> tagStack;
+    bool isValid = true;
+    string line;
+    int lineNumber = 1;
+    while (getline(file, line)) {
+        for (char& c : line) {
+            if (c == '<') {
+                tagStack.push("<");
+            }
+            else if (c == '>') {
+                if (tagStack.empty() || tagStack.top() != "<") {
+                    isValid = false;
+                    break;
+                }
+                tagStack.pop();
+            }
+        }
+        lineNumber++;
+    }
+    if (!tagStack.empty()) {
+        isValid = false;
+    }
+    if (isValid) {
+        cout << "Valid." << endl;
+    }
+    else {
+        cout << "Not Valid." << endl;
+    }
+    file.close();
+}
